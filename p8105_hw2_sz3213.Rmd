@@ -5,8 +5,97 @@ date: "2023-09-27"
 output: github_document
 ---
 
+## Problem 1
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+pols_month <-
+  read_csv("mydata/pols-month.csv") |> 
+  separate(mon, into = c("year", "month", "day"), sep = "-") |> 
+  mutate(
+    month = case_match(
+      month,
+      "01" ~ "Jan",
+      "02" ~ "Feb",
+      "03" ~ "Mar",
+      "04" ~ "Apr",
+      "05" ~ "May",
+      "06" ~ "Jun",
+      "07" ~ "Jul",
+      "08" ~ "Aug",
+      "09" ~ "Sep",
+      "10" ~ "Oct",
+      "11" ~ "Nov",
+      "12" ~ "Dec"
+    )
+  ) |>
+  mutate(
+    president = case_match(
+      prez_gop,
+      1 ~ "gop",
+      2 ~ "gop",
+      0 ~ "dem"
+    )
+  ) |> 
+  select(-prez_gop, -prez_dem) |> 
+  select(-day)
+
+```
 
 
+
+```{r}
+snp <-
+  read_csv("mydata/snp.csv") |> 
+  mutate(
+    date_2 = mdy(date)
+  ) |> 
+  separate(date_2, into = c("year", "month", "day"), sep = "-") |> 
+  mutate(
+    month = case_match(
+      month,
+      "01" ~ "Jan",
+      "02" ~ "Feb",
+      "03" ~ "Mar",
+      "04" ~ "Apr",
+      "05" ~ "May",
+      "06" ~ "Jun",
+      "07" ~ "Jul",
+      "08" ~ "Aug",
+      "09" ~ "Sep",
+      "10" ~ "Oct",
+      "11" ~ "Nov",
+      "12" ~ "Dec"
+    )
+  ) |> 
+  relocate(year, month) |> 
+  select(-date, -day)
+```
+
+
+```{r}
+unemploy <-
+  read_csv("mydata/unemployment.csv") |>
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) |> 
+  mutate(
+    year = as.character(Year)
+  ) |> 
+  select(year, everything(), -Year)
+```
+
+```{r}
+result_df <- 
+  inner_join(pols_month, snp, by = c("year", "month")) |> 
+  inner_join(unemploy, by  = c("year", "month"))
+
+```
 
 
 
