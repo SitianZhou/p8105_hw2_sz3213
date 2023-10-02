@@ -5,13 +5,14 @@ date: "2023-09-27"
 output: github_document
 ---
 
-## Problem 1
-
 ```{r}
 library(tidyverse)
 ```
 
-```{r}
+
+## Problem 1
+
+```{r pols_month}
 pols_month <-
   read_csv("mydata/pols-month.csv") |> 
   separate(mon, into = c("year", "month", "day"), sep = "-") |> 
@@ -47,7 +48,7 @@ pols_month <-
 
 
 
-```{r}
+```{r snp}
 snp <-
   read_csv("mydata/snp.csv") |> 
   mutate(
@@ -76,7 +77,7 @@ snp <-
 ```
 
 
-```{r}
+```{r unemploy}
 unemploy <-
   read_csv("mydata/unemployment.csv") |>
   pivot_longer(
@@ -90,13 +91,67 @@ unemploy <-
   select(year, everything(), -Year)
 ```
 
-```{r}
+```{r combined_result}
 result_df <- 
   inner_join(pols_month, snp, by = c("year", "month")) |> 
   inner_join(unemploy, by  = c("year", "month"))
 
 ```
 
+###########
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
+
+## Problem 2
+
+```{r Mr_trash_wheel}
+Mr_tw <-
+  readxl::read_excel("mydata/202207 Trash Wheel Collection Data.xlsx",
+                     sheet = "Mr. Trash Wheel",
+                     range = "A2:N549") |> 
+  janitor::clean_names() |> 
+  mutate(
+    homes_powered = weight_tons * 500 / 30,
+    year = as.numeric(year),
+    trash_wheel_id = "Mr. Trash Wheel"
+  )
+```
+
+
+
+
+```{r Prof_trash_wheel}
+Prof_tw <-
+  readxl::read_excel("mydata/202207 Trash Wheel Collection Data.xlsx",
+                     sheet = "Professor Trash Wheel",
+                     range = "A2:M96") |> 
+  janitor::clean_names() |> 
+  mutate(
+    homes_powered = weight_tons * 500 / 30, 
+    trash_wheel_id = "Professor Trash Wheel"
+  )
+```
+
+
+```{r Gwynnda_trash_wheel}
+Gwynnda <-
+  readxl::read_excel("mydata/202207 Trash Wheel Collection Data.xlsx",
+                     sheet = "Gwynnda Trash Wheel",
+                     range = "A2:K108") |> 
+  janitor::clean_names() |> 
+  mutate(
+    homes_powered = weight_tons * 500 / 30, 
+    trash_wheel_id = "Gwynnda Trash Wheel"
+  )
+```
+
+
+```{r}
+trash_wheels <-
+  bind_rows(Mr_tw, Prof_tw, Gwynnda) |> 
+  select(dumpster, trash_wheel_id, everything())
+```
+
+Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 
