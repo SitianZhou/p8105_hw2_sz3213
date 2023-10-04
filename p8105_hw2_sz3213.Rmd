@@ -10,7 +10,7 @@ knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 ```
 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 library(tidyverse)
 library(readxl)
 ```
