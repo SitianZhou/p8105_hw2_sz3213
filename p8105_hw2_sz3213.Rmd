@@ -178,14 +178,12 @@ amyloid <-
     across(
       c(baseline, time_2, time_4, time_6, time_8), ~na_if(., "Na"))) |> 
   mutate_at(c("baseline", "time_2", "time_4", "time_8"), as.numeric)
-
-  
 ```
 
  
 The amyloid $\beta$ 42/40 ratio is used for diagnosing and predicting Alzheimer’s disease outcomes. The dataset `amyloid` contains `r ncol(amyloid)` observations and `r nrow(amyloid)` variables, recording $\beta$ 42/40 ratio measured with 2-year intervals from the baseline. During the data processing, all the missing values were converted to `NA`, and all $\beta$ 42/40 ratio measures were converted to numeric values.
 
-
+Datasets `baseline` and `amyloid` were combined to show only participants show up in both datasets. The result dataframe was exported as a .csv file. 
 
 ```{r}
 mci_baseline_only <- 
@@ -198,7 +196,6 @@ mci_both <-
   inner_join(baseline, amyloid, c('id'='study_id'))
 
 write_csv(mci_both, "mydata/mci_cleaned.csv")
-
 ```
 
 
